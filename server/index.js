@@ -4,7 +4,6 @@ const app = express();
 const port = 4000;
 const passport = require("passport");
 const passportSetup = require("./config/passport-setup");
-const session = require("express-session");
 const authRoutes = require("./routes/auth");
 const mongoose = require("mongoose");
 const cors = require("cors");
@@ -30,7 +29,7 @@ mongoose
 
 app.use(
   cookieSession({
-    name: "session",
+    name: "Chronicle",
     keys: [process.env.COOKIE_KEY],
     maxAge: 24 * 60 * 60 * 100
   })
@@ -59,7 +58,6 @@ app.use(
 app.use("/auth", authRoutes);
 
 const authCheck = (req, res, next) => {
-    console.log("Auth Check")
   if (!req.user) {
     res.status(401).json({
       authenticated: false,
@@ -74,7 +72,6 @@ const authCheck = (req, res, next) => {
 // otherwise, send a 401 response that the user is not authenticated
 // authCheck before navigating to home page
 app.get("/", authCheck, (req, res) => {
-    console.log("/")
   res.status(200).json({
     authenticated: true,
     message: "user successfully authenticated",
