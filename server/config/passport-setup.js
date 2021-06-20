@@ -6,13 +6,11 @@ require('dotenv').config()
 // serialize the user.id to save in the cookie session
 // so the browser will remember the user when login
 passport.serializeUser((user, done) => {
-  console.log("Serialising user")
-  done(null, user.id);
+  done(null, user._id);
 });
 
 // deserialize the cookieUserId to user in the database
 passport.deserializeUser((id, done) => {
-  console.log("DESerialising user")
   User.findById(id)
     .then(user => {
       done(null, user);
@@ -32,20 +30,23 @@ passport.use(new GoogleStrategy({
     async (token, tokenSecret, profile, done) => {
       // find current user in UserModel
       const currentUser = await User.findOne({
-        twitterId: profile._json.id_str
+        googleId: profile._json.sub
       });
       // create new user if the database doesn't have this user
       if (!currentUser) {
         const newUser = await new User({
           name: profile._json.name,
+          email: profile._json.email,
           screenName: profile._json.screen_name,
-          twitterId: profile._json.id_str,
-          profileImageUrl: profile._json.profile_image_url
+          googleId: profile._json.sub,
+          profileImageUrl: profile._json.picture
         }).save();
         if (newUser) {
+          console.log('New User: ' + newUser)
           done(null, newUser);
         }
       }
+      console.log('Current User: ' + currentUser)
       done(null, currentUser);
     }
 ));
