@@ -5,7 +5,7 @@ import { RootStore } from './root'
 
 export class AuthStore {
     // Parameters
-    @observable cookie = new Cookie("Chronicle")
+    //@observable cookie = new Cookie("Chronicle")
     @observable isAuthorized: boolean = false
     rootStore: RootStore
 
@@ -46,13 +46,13 @@ export class AuthStore {
     @action
     login = (token: string) => {
         this.isAuthorized = true
-        this.cookie.set(token)
+        //this.cookie.set(token)
     }
 
     @action
     logout = () => {
         this.isAuthorized = false
-        this.cookie.remove()
+        //this.cookie.remove()
     }
 
     @computed
