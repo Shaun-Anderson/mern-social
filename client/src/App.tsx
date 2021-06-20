@@ -11,13 +11,10 @@ function App() {
   const { authStore: { isAuthorized, load } } = useStore()
   const [data, setData] = useState<string>("");
 
-  const login = () => {
-    window.open("http://localhost:4000/auth/google", "_self");
-  }
-
   useEffect(() => {
     async function getToken() {
       const token = await load();
+      console.log(token)
       setData("hi")
     }
     getToken();
@@ -25,25 +22,8 @@ function App() {
 
   if(!data.length) return (<span>loading...</span>);
 
-
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-        <li onClick={login}>Login</li>
-
-      </header>
       <Switch>
       <PrivateRoute isAuthorized={isAuthorized} exact path="/" component={Dashboard} />
       <PrivateRoute isAuthorized={isAuthorized} path="/Dashboard" component={Dashboard} />
