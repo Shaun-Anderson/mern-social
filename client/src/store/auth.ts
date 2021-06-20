@@ -1,11 +1,9 @@
 import { observable, action, computed } from 'mobx'
-import Cookie from 'mobx-cookie'
 import { RootStore } from './root'
 
 
 export class AuthStore {
     // Parameters
-    //@observable cookie = new Cookie("Chronicle")
     @observable isAuthorized: boolean = false
     rootStore: RootStore
 
@@ -37,22 +35,17 @@ export class AuthStore {
     // Check if cookie exists and has value
     constructor(rootStore: RootStore) {
         this.rootStore = rootStore
-        console.log("test")
-        // if(this.cookie.value)
-        //     this.isAuthorized = true
     }
 
     // Actions
     @action
     login = (token: string) => {
         this.isAuthorized = true
-        //this.cookie.set(token)
     }
 
     @action
     logout = () => {
         this.isAuthorized = false
-        //this.cookie.remove()
     }
 
     @computed
