@@ -5,10 +5,15 @@ const port = 4000;
 const passport = require("passport");
 const passportSetup = require("./config/passport-setup");
 const authRoutes = require("./routes/auth");
+const userRoutes = require("./routes/user");
+const todoRoutes = require("./routes/todo");
 const mongoose = require("mongoose");
 const cors = require("cors");
 const cookieParser = require("cookie-parser"); // parse cookie header
+const bodyParser = require("body-parser"); // parse cookie header
 require('dotenv').config()
+const Todo = require("./models/todo");
+const { Blog } = require("./models/test");
 
 // connect to mongodb
 mongoose
@@ -37,13 +42,12 @@ app.use(
 
 // parse cookies
 app.use(cookieParser());
+app.use(bodyParser.json());
 
 // initalize passport
 app.use(passport.initialize());
 // deserialize cookie from the browser
 app.use(passport.session());
-
-console.log(passport.session())
 
 // set up cors to allow us to accept requests from our client
 app.use(
@@ -56,17 +60,20 @@ app.use(
 
 // set up routes
 app.use("/auth", authRoutes);
+app.use("/user", userRoutes);
+app.use("/todo", todoRoutes);
 
 const authCheck = (req, res, next) => {
   if (!req.user) {
-    res.status(401).json({
-      authenticated: false,
-      message: "user has not been authenticated"
-    });
-  } else {
-    next();
-  }
-};
+      res.status(401).json({
+        authenticated: false,
+        message: "user has not been authenticated"
+      });
+    } else {
+      console.log(req.user)
+      next();
+    }
+}
 
 // if it's already login, send the profile response,
 // otherwise, send a 401 response that the user is not authenticated
@@ -79,6 +86,23 @@ app.get("/", authCheck, (req, res) => {
     cookies: req.cookies
   });
 });
+
+// TEST
+// app.post('/addtest', authCheck, async (req, res) => {
+//   console.log(req.user._id)
+//   const newTodo = new Todo({
+//     user: req.user._id,
+//     //completed: false,
+//     body: req.body.title || ""
+//   });
+//   console.log(newTodo)
+//   try {
+//     const result = await newTodo.save();
+//     return res.status(201).json(result);
+//   } catch (err) {
+//     return res.status(400).send(err);
+//   }
+// });
 
 // connect react to nodejs express server
 app.listen(port, () => console.log(`Server is running on port ${port}!`));

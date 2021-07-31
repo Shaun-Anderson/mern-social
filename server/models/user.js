@@ -7,9 +7,15 @@ const userSchema = new Schema({
   screenName: String,
   googleId: String,
   twitterId: String,
-  profileImageUrl: String
+  profileImageUrl: String,
+  todos: [{ 
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Todo"
+  }],
+  following: [{type: mongoose.Schema.ObjectId, ref: 'User'}],
+  followers: [{type: mongoose.Schema.ObjectId, ref: 'User'}]
 });
 
-const User = mongoose.model("user", userSchema);
+const User = mongoose.model("User", userSchema);
 
 module.exports = User;

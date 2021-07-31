@@ -1,17 +1,11 @@
 import { observable, action, computed } from 'mobx'
 import { RootStore } from './root'
-import Cookie from 'mobx-cookie'
+import axios from 'axios'
 
-
-export class AuthStore {
+export class UserStore {
     // Parameters
     @observable isAuthorized: boolean = false
-    @observable username: string = ""
     rootStore: RootStore
-
-    constructor(rootStore: RootStore) {
-        this.rootStore = rootStore
-    }
 
     @action
     load = async (): Promise<void> => {
@@ -29,10 +23,7 @@ export class AuthStore {
               throw new Error("failed to authenticate user");
             })
             .then(responseJson => {
-              console.log(responseJson)
               console.log("AUTH: success")
-              //console.log(responseJson)
-              this.username = responseJson.user.name;
               this.isAuthorized = true
             })
             .catch(error => {
@@ -41,15 +32,28 @@ export class AuthStore {
             });
     }
 
+    // Check if cookie exists and has value
+    constructor(rootStore: RootStore) {
+        this.rootStore = rootStore
+    }
+
     // Actions
     @action
-    login = () => {
-      window.open("http://localhost:4000/auth/google", "_self");
+    follow = async (signedInUserId: String, idToFollow: String) => {
+      const followResult = await axios.patch(`/users/following/${signedInUserId}`, {
+        idToFollow
+      });
+      const addFollowerResult = await axios.patch(
+        `/users/followers/${idToFollow}`,
+        {
+          followerId: signedInUserId
+        }
+      );
     }
 
     @action
-    logout = () => {
-      window.open("http://localhost:4000/auth/logout", "_self");
+    unfollow = () => {
+        this.isAuthorized = false
     }
 
     @computed

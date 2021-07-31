@@ -22,5 +22,9 @@
     "passport-google-oauth2": "^0.2.0",
     "passport-twitter": "^1.0.4",
     "validation": "0.0.1"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.14.8",
+    "@babel/core": "^7.14.8"
   }
 }

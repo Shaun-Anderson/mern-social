@@ -1,6 +1,6 @@
 const passport = require("passport");
 const TwitterStrategy = require("passport-twitter");
-const User = require("../models/user");
+const { User } = require("../models/test");
 require('dotenv').config()
 
 // serialize the user.id to save in the cookie session
@@ -13,6 +13,7 @@ passport.serializeUser((user, done) => {
 passport.deserializeUser((id, done) => {
   User.findById(id)
     .then(user => {
+      console.log(user)
       done(null, user);
     })
     .catch(e => {
