@@ -17,13 +17,29 @@ const authCheck = (req, res, next) => {
 
 router.use(authCheck);
 
-// when login is successful, retrieve user info
+// GET get all users
 router.get('/', async (req, res) => {
   const users = await User.find();
   res.status(200).json(users);
 });
 
-// Get a user by their id
+// GET Search for users based on the username
+// - Return Limit: 10
+router.get('/search', async (req, res) => {
+  try {
+    const users = await Users.find({
+      username: { $regex: req.query.username },
+    })
+      .limit(10)
+      .select("fullname username");
+
+    res.json({ users });
+  } catch (err) {
+    return res.status(500).json({ msg: err.message });
+  }
+});
+
+// GET Get a user by their id
 router.get('/:id', async (req, res) => {
   const { id } = req.params;
 
@@ -39,7 +55,7 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-// Adds a following entry to the current user
+// PATCH Adds a following entry to the current user
 router.patch(':id/follow', async (req, res) => {
   try {
     const user = await Users.find({
@@ -75,11 +91,9 @@ router.patch(':id/follow', async (req, res) => {
   }
  });
 
-// Add a user to the list of users you are following
+// PATCH Add a user to the list of users you are following
 router.patch(':id/unfollow', async (req, res) => {
   try {
-      
-
     const newUser = await Users.findOneAndUpdate(
       { _id: req.params.id },
       {
@@ -99,5 +113,42 @@ router.patch(':id/unfollow', async (req, res) => {
     return res.status(500).json({ msg: err.message });
   }
 });
+
+// GET return suggested users based on the followers/followings of users the current user relates to
+router.get('/suggestionsUser', async (req, res) => {
+  try {
+    const newArr = [...req.user.following, req.user._id];
+
+    const num = req.query.num || 10;
+    const users = await Users.aggregate([
+      { $match: { _id: { $nin: newArr } } },
+      { $sample: { size: Number(num) } },
+      {
+        $lookup: {
+          from: "users",
+          localField: "followers",
+          foreignField: "_id",
+          as: "followers",
+        },
+      },
+      {
+        $lookup: {
+          from: "users",
+          localField: "following",
+          foreignField: "_id",
+          as: "following",
+        },
+      },
+    ]).project("-password");
+
+    return res.json({
+      users,
+      result: users.length,
+    });
+  } catch (err) {
+    return res.status(500).json({ msg: err.message });
+  }
+})
+
 
 module.exports = router;
