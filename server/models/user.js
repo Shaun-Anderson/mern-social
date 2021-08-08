@@ -8,10 +8,7 @@ const userSchema = new Schema({
   googleId: String,
   twitterId: String,
   profileImageUrl: String,
-  todos: [{ 
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "Todo"
-  }],
+  private: Boolean,
   following: [{type: mongoose.Schema.ObjectId, ref: 'User'}],
   followers: [{type: mongoose.Schema.ObjectId, ref: 'User'}]
 });
