@@ -39,41 +39,65 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-router.get('/:id/todos', async (req, res) => {
-  const { id } = req.params;
-  console.log("Attempt to get user blogs for id: " + id)
-  User.findById(id)
-  .populate("todos") // key to populate
-  .then((result) => {
-    return res.status(200).json(result)
-  }).catch((err) => {
-    console.log(err);
-  })
-});
+// Adds a following entry to the current user
+router.patch(':id/follow', async (req, res) => {
+  try {
+    const user = await Users.find({
+      _id: req.params.id,
+      followers: req.user._id,
+    });
+    if (user.length > 0)
+      return res
+        .status(500)
+        .json({ msg: "You are already following this user." });
+
+
+
+    const newUser = await Users.findOneAndUpdate(
+      { _id: req.params.id },
+      {
+        $push: {
+          followers: req.user._id
+        },
+      },
+      { new: true }
+    ).populate('followers following');
+
+    await Users.findOneAndUpdate(
+      { _id: req.user._id },
+      { $push: { following: req.params.id } },
+      { new: true }
+    );
+
+    res.json({ newUser });
+  } catch (err) {
+    return res.status(500).json({ msg: err.message });
+  }
+ });
 
 // Add a user to the list of users you are following
-//router.patch('/following/:id', async (req, res) => {
-//  const { id } = req.params;
-//
-//  if (!req.body.idToFollow) {
-//    return res.status(404).json({ message: 'No ID found' });
-//  }
-//
-//  try {
-//    await User.findByIdAndUpdate(
-//      id,
-//      { $addToSet: { following: req.body.idToFollow } },
-//      { new: true, upsert: true },
-//      (err, doc) => {
-//        if (err) {
-//          return res.status(400).json(err);
-//        }
-//        return res.status(201).json(doc);
-//      }
-//    );
-//  } catch (e) {
-//    return res.status(500).json(err);
-//  }
-//});
+router.patch(':id/unfollow', async (req, res) => {
+  try {
+      
+
+    const newUser = await Users.findOneAndUpdate(
+      { _id: req.params.id },
+      {
+        $pull: { followers: req.user._id }
+      },
+      { new: true }
+    ).populate('followers following');
+
+    await Users.findOneAndUpdate(
+      { _id: req.user._id },
+      { $pull: { following: req.params.id } },
+      { new: true }
+    );
+
+    res.json({ newUser });
+  } catch (err) {
+    return res.status(500).json({ msg: err.message });
+  }
+});
 
 module.exports = router;
