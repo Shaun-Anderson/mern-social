@@ -6,14 +6,12 @@ const passport = require("passport");
 const passportSetup = require("./config/passport-setup");
 const authRoutes = require("./routes/auth");
 const userRoutes = require("./routes/user");
-const todoRoutes = require("./routes/todo");
+const todoRoutes = require("./routes/post");
 const mongoose = require("mongoose");
 const cors = require("cors");
 const cookieParser = require("cookie-parser"); // parse cookie header
 const bodyParser = require("body-parser"); // parse cookie header
 require('dotenv').config()
-const Todo = require("./models/todo");
-const { Blog } = require("./models/test");
 
 // connect to mongodb
 mongoose
@@ -86,23 +84,6 @@ app.get("/", authCheck, (req, res) => {
     cookies: req.cookies
   });
 });
-
-// TEST
-// app.post('/addtest', authCheck, async (req, res) => {
-//   console.log(req.user._id)
-//   const newTodo = new Todo({
-//     user: req.user._id,
-//     //completed: false,
-//     body: req.body.title || ""
-//   });
-//   console.log(newTodo)
-//   try {
-//     const result = await newTodo.save();
-//     return res.status(201).json(result);
-//   } catch (err) {
-//     return res.status(400).send(err);
-//   }
-// });
 
 // connect react to nodejs express server
 app.listen(port, () => console.log(`Server is running on port ${port}!`));
