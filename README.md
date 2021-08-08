@@ -1,5 +1,8 @@
-# Chronicle
+# Mern Social
 
-A simple social book app. 
+A basic social application. 
 
-- users can sign up using their google account
+- [x] users can sign up using their google account
+- [ ] users follow other users
+- [ ] users can add posts
+- [ ] users can like others posts
