@@ -6,7 +6,7 @@ const passport = require("passport");
 const passportSetup = require("./config/passport-setup");
 const authRoutes = require("./routes/auth");
 const userRoutes = require("./routes/user");
-const todoRoutes = require("./routes/post");
+const postRoutes = require("./routes/post");
 const mongoose = require("mongoose");
 const cors = require("cors");
 const cookieParser = require("cookie-parser"); // parse cookie header
@@ -59,7 +59,7 @@ app.use(
 // set up routes
 app.use("/auth", authRoutes);
 app.use("/user", userRoutes);
-app.use("/todo", todoRoutes);
+app.use("/post", postRoutes);
 
 const authCheck = (req, res, next) => {
   if (!req.user) {
