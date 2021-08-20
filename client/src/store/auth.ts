@@ -7,6 +7,7 @@ export class AuthStore {
     // Parameters
     @observable isAuthorized: boolean = false
     @observable username: string = ""
+    @observable avatarUrl: string = ""
     rootStore: RootStore
 
     constructor(rootStore: RootStore) {
@@ -33,6 +34,7 @@ export class AuthStore {
               console.log("AUTH: success")
               //console.log(responseJson)
               this.username = responseJson.user.name;
+              this.avatarUrl = responseJson.user.profileImageUrl;
               this.isAuthorized = true
             })
             .catch(error => {

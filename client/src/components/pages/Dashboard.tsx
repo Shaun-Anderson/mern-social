@@ -18,22 +18,25 @@ import {
   Text,
   Spacer,
   FormLabel,
-  Switch
+  Switch,
+  Grid,
+  Textarea
 } from "@chakra-ui/react";
-import { Todo } from '../../types/todo';
+import { Post } from '../../types/post';
 import { observer } from 'mobx-react-lite';
 import { toJS } from 'mobx'
 import { useColorMode, useColorModeValue } from "@chakra-ui/react"
 import { SunIcon, MoonIcon } from "@chakra-ui/icons"
+import { PostForm } from '../PostForm';
+import { PostCard } from '../PostCard';
 
 export const Dashboard = observer(() => {
-  const { authStore: { isAuthorized, logout, username }, todoStore } = useStore()
+  const { authStore: { isAuthorized, logout, username, avatarUrl }, postStore } = useStore()
   const { toggleColorMode, colorMode } = useColorMode()
 
-  //const [todos, setTodos] = useState<Todo[]>(todoStore.todos);
 
   useEffect(() => {
-    todoStore.fetchTodos()
+    postStore.fetchPosts()
   }, [])
 
   return (
@@ -45,16 +48,17 @@ export const Dashboard = observer(() => {
     padding={3}
    // alignItems="center"
   >
+
     <Box width="full" display="flex" alignItems="center"
 >
       <Box flexGrow={1}>
-      <Heading mb={4}>Mern Todo</Heading>
+      <Heading mb={4}>Mern Post</Heading>
       </Box>
       <Spacer />
                 <Box>
                     <FormControl display="flex" alignItems="center">
                         <FormLabel htmlFor="email-alerts" mb="0" mr={2}>
-                            <SunIcon/>
+                            <SunIcon verticalAlign="middle" />
                         </FormLabel>
                             <Switch id="email-alerts" checked={colorMode === "light" ? false : true } onChange={toggleColorMode}/>
                         <FormLabel htmlFor="email-alerts" mb="0" mr={0} ml={2}>
@@ -62,41 +66,22 @@ export const Dashboard = observer(() => {
                         </FormLabel>
                     </FormControl>
                 </Box>
-<Box>      <Button
-      borderRadius={10}
-      type="button"
-      variant="solid"
-      colorScheme="teal"
-      width="full"
-      onClick={(e) => logout() }
-    >
-      {username}
-    </Button></Box>
+<Box> 
+    <Avatar name={username} src={avatarUrl}  size="sm"     onClick={(e) => logout() }
+/>
+</Box>
 
     </Box>
-      <Button
-      borderRadius={10}
-      type="button"
-      variant="solid"
-      colorScheme="teal"
-      width="full"
-      onClick={(e) => todoStore.add({
-        _id: "0",
-        title: "test",
-        completed: false,
-        createdBy: "test"
-      }) }
-    >
-      Add Recipe
-    </Button>
 
+    <PostForm onSubmit={(post: Post) => postStore.add(post)} />
+    <Stack spacing={4}>
 
-      {console.log(todoStore.todos)}
-    {todoStore.todos.map(function (todo) {
-      console.log(toJS(todo)
-      )
-      return (<div key={todo._id}>{todo.title}</div>)
+      {console.log(postStore.posts)}
+    {postStore.posts.map(function (post) {
+      console.log(toJS(post))
+      return (<PostCard key={post._id} post={post} />)
     })}
+    </Stack>
     </Flex>
   );
 })

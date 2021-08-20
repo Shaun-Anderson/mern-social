@@ -34,10 +34,12 @@ function App() {
     <ChakraProvider>
                 <Flex
       direction="column"
-      align="center"
+      //align="center"
       maxW={{ xl: "1200px" }}
       m="0 auto"
       p={5}
+      //h="100%"
+      minH="100vh"
     >
               <Switch>
         <PrivateRoute isAuthorized={isAuthorized} exact path="/" component={Dashboard} />
