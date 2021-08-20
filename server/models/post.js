@@ -3,8 +3,8 @@ const Schema = mongoose.Schema;
 
 const postSchema = new Schema({
   title: String,
-  likes: [{type: mongoose.Schema.ObjectId, ref: 'User'}],
-  postedBy: {type: mongoose.Schema.ObjectId, ref: 'User'}
+  likes: [{ type: mongoose.Schema.ObjectId, ref: "User" }],
+  postedBy: { type: mongoose.Schema.ObjectId, ref: "User" },
 });
 
 const post = mongoose.model("Post", postSchema);

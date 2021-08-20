@@ -1,5 +1,5 @@
-import React from 'react';
-import { useStore } from '../../common/useStore'
+import React from "react";
+import { useStore } from "../../common/useStore";
 import {
   Flex,
   Heading,
@@ -14,30 +14,35 @@ import {
   Avatar,
   FormControl,
   FormHelperText,
-  InputRightElement
+  InputRightElement,
 } from "@chakra-ui/react";
-import { GoogleLoginButton, TwitterLoginButton } from "react-social-login-buttons";
+import {
+  GoogleLoginButton,
+  TwitterLoginButton,
+} from "react-social-login-buttons";
 
 export default function Login() {
-  const { authStore: { isAuthorized, login } } = useStore()
+  const {
+    authStore: { isAuthorized, login },
+  } = useStore();
 
   return (
-  <Flex
-    flexDirection="column"
-    width="100wh"
-    height="100vh"
-   // backgroundColor="gray.200"
-    justifyContent="center"
-    alignItems="center"
-  >
-    <Stack
-      flexDir="column"
-      mb="2"
+    <Flex
+      flexDirection="column"
+      width="100wh"
+      height="100vh"
+      // backgroundColor="gray.200"
       justifyContent="center"
       alignItems="center"
     >
-      <Heading color="teal.400">BookShelf</Heading>
-      <Box minW={{ base: "90%", md: "300px" }}>
+      <Stack
+        flexDir="column"
+        mb="2"
+        justifyContent="center"
+        alignItems="center"
+      >
+        <Heading color="teal.400">BookShelf</Heading>
+        <Box minW={{ base: "90%", md: "300px" }}>
           <Stack
             spacing={4}
             p="1rem"
@@ -46,9 +51,8 @@ export default function Login() {
           >
             <GoogleLoginButton onClick={() => login()} />
           </Stack>
-      </Box>
-    </Stack>
-  </Flex>
+        </Box>
+      </Stack>
+    </Flex>
   );
 }
-

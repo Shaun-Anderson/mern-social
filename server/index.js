@@ -11,7 +11,7 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 const cookieParser = require("cookie-parser"); // parse cookie header
 const bodyParser = require("body-parser"); // parse cookie header
-require('dotenv').config()
+require("dotenv").config();
 
 // connect to mongodb
 mongoose
@@ -19,14 +19,14 @@ mongoose
     useCreateIndex: true,
     useNewUrlParser: true,
     useUnifiedTopology: true,
-    useFindAndModify: false
+    useFindAndModify: false,
   })
-  .then(x => {
+  .then((x) => {
     console.log(
       `Connected to Mongo! Database name: "${x.connections[0].name}"`
     );
   })
-  .catch(err => {
+  .catch((err) => {
     console.error("Error connecting to mongo", err);
   });
 
@@ -34,7 +34,7 @@ app.use(
   cookieSession({
     name: "Chronicle",
     keys: [process.env.COOKIE_KEY],
-    maxAge: 24 * 60 * 60 * 100
+    maxAge: 24 * 60 * 60 * 100,
   })
 );
 
@@ -52,7 +52,7 @@ app.use(
   cors({
     origin: "http://localhost:3000", // allow to server to accept request from different origin
     methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
-    credentials: true // allow session cookie from browser to pass through
+    credentials: true, // allow session cookie from browser to pass through
   })
 );
 
@@ -63,15 +63,15 @@ app.use("/post", postRoutes);
 
 const authCheck = (req, res, next) => {
   if (!req.user) {
-      res.status(401).json({
-        authenticated: false,
-        message: "user has not been authenticated"
-      });
-    } else {
-      console.log(req.user)
-      next();
-    }
-}
+    res.status(401).json({
+      authenticated: false,
+      message: "user has not been authenticated",
+    });
+  } else {
+    console.log(req.user);
+    next();
+  }
+};
 
 // if it's already login, send the profile response,
 // otherwise, send a 401 response that the user is not authenticated
@@ -81,7 +81,7 @@ app.get("/", authCheck, (req, res) => {
     authenticated: true,
     message: "user successfully authenticated",
     user: req.user,
-    cookies: req.cookies
+    cookies: req.cookies,
   });
 });
 
