@@ -49,6 +49,20 @@ export class PostStore {
     }
   };
 
+  deletePost = async (post: Post) => {
+    try {
+      const result = await axios.delete(`/post/${post._id}`, {
+        withCredentials: true,
+      });
+      //var test = this.posts.remove(post);
+      var newPosts = this.posts.filter((item) => item._id !== post._id);
+      this.posts.replace(newPosts);
+      console.log(this.posts[0]);
+    } catch (error) {
+      console.error("error", error);
+    }
+  };
+
   // TODO: Replace later with a modified returned post from server
   like = async (post: Post, user: User) => {
     try {

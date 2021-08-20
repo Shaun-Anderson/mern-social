@@ -21,7 +21,7 @@ interface PostCardProps {
 export const PostCard = ({ post }: PostCardProps) => {
   const {
     authStore: { user },
-    postStore: { like, unlike },
+    postStore: { like, unlike, deletePost },
   } = useStore();
   return (
     <Box p={5} shadow="sm" borderWidth="1px" rounded="xl">
@@ -46,7 +46,12 @@ export const PostCard = ({ post }: PostCardProps) => {
           </Button>
 
           {post.postedBy._id === user?._id && (
-            <Button size="sm" colorScheme="red" variant="outline">
+            <Button
+              size="sm"
+              colorScheme="red"
+              variant="outline"
+              onClick={() => deletePost(post)}
+            >
               Delete
             </Button>
           )}

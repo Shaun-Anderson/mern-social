@@ -38,6 +38,29 @@ router.get("/:id", async (req, res) => {
   }
 });
 
+// Delete a post by id
+router.delete("/:id", async (req, res) => {
+  try {
+    const post = await Post.findOneAndDelete({
+      _id: req.params.id,
+      postedBy: req.user._id,
+    });
+    // Future: Comment
+    //await Comments.deleteMany({ _id: { $in: post.comments } });
+
+    res.json({
+      msg: "Post deleted successfully.",
+      newPost: {
+        ...post,
+        user: req.user,
+      },
+    });
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json({ msg: err.message });
+  }
+});
+
 // Get all recipes for
 router.get("user/:userId", async (req, res) => {
   const { userId } = req.params;
@@ -63,7 +86,8 @@ router.post("/", async (req, res) => {
   });
   try {
     const result = await newPost.save();
-    return res.status(201).json(result.populate("postedBy"));
+    console.log(await newPost.populate("postedBy").execPopulate());
+    return res.status(201).json(newPost.populate("postedBy"));
   } catch (err) {
     return res.status(400).send(err);
   }
