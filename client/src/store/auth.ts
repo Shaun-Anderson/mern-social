@@ -1,13 +1,13 @@
 import { observable, action, computed } from 'mobx'
 import { RootStore } from './root'
 import Cookie from 'mobx-cookie'
+import { User } from '../types/user'
 
 
 export class AuthStore {
     // Parameters
     @observable isAuthorized: boolean = false
-    @observable username: string = ""
-    @observable avatarUrl: string = ""
+    @observable user?: User
     rootStore: RootStore
 
     constructor(rootStore: RootStore) {
@@ -33,8 +33,7 @@ export class AuthStore {
               console.log(responseJson)
               console.log("AUTH: success")
               //console.log(responseJson)
-              this.username = responseJson.user.name;
-              this.avatarUrl = responseJson.user.profileImageUrl;
+              this.user = responseJson.user;
               this.isAuthorized = true
             })
             .catch(error => {

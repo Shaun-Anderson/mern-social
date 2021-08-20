@@ -31,7 +31,7 @@ import { PostForm } from '../PostForm';
 import { PostCard } from '../PostCard';
 
 export const Dashboard = observer(() => {
-  const { authStore: { isAuthorized, logout, username, avatarUrl }, postStore } = useStore()
+  const { authStore: { isAuthorized, logout, user }, postStore } = useStore()
   const { toggleColorMode, colorMode } = useColorMode()
 
 
@@ -67,7 +67,7 @@ export const Dashboard = observer(() => {
                     </FormControl>
                 </Box>
 <Box> 
-    <Avatar name={username} src={avatarUrl}  size="sm"     onClick={(e) => logout() }
+    <Avatar name={user?.name} src={user?.profileImageUrl}  size="sm"     onClick={(e) => logout() }
 />
 </Box>
 
@@ -78,8 +78,7 @@ export const Dashboard = observer(() => {
 
       {console.log(postStore.posts)}
     {postStore.posts.map(function (post) {
-      console.log(toJS(post))
-      return (<PostCard key={post._id} post={post} />)
+      return (<PostCard key={post._id} post={toJS(post)} />)
     })}
     </Stack>
     </Flex>
