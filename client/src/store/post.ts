@@ -16,6 +16,7 @@ export class PostStore {
   rootStore: RootStore;
   //posts: Post[] = []
   readonly posts = observable<Post>([]);
+  state = "pending"; // "pending", "done" or "error"
 
   constructor(rootStore: RootStore) {
     this.rootStore = rootStore;
@@ -25,16 +26,17 @@ export class PostStore {
   //@action
   fetchPosts = async () => {
     try {
+      this.state = "pending";
       // fetch data from a url endpoint
       const result = await axios.get<Post[]>("/post", {
         method: "GET",
         withCredentials: true,
       });
-      console.log(result.data);
       this.posts.replace(result.data);
-      console.log(this.posts);
+      this.state = "done";
     } catch (error) {
       console.error("error", error);
+      this.state = "error";
     }
   };
 

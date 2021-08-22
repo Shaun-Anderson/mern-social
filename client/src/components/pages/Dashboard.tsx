@@ -21,6 +21,7 @@ import {
   Switch,
   Grid,
   Textarea,
+  Skeleton,
 } from "@chakra-ui/react";
 import { Post } from "../../types/post";
 import { observer } from "mobx-react-lite";
@@ -80,8 +81,15 @@ export const Dashboard = observer(() => {
         </Box>
       </Box>
 
-      <PostForm onSubmit={(post: Post) => postStore.add(post)} />
+      <PostForm />
       <Stack spacing={4}>
+        {postStore.state === "pending" && (
+          <Stack spacing={4}>
+            <Skeleton height="50px" rounded="xl" />
+            <Skeleton height="50px" rounded="xl" />
+            <Skeleton height="50px" rounded="xl" />
+          </Stack>
+        )}
         {postStore.posts.map(function (post) {
           return <PostCard key={post._id} post={toJS(post)} />;
         })}
