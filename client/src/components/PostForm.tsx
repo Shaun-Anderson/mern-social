@@ -4,9 +4,10 @@ import { CloseIcon } from "@chakra-ui/icons";
 import { useStore } from "../common/useStore";
 import { useForm } from "react-hook-form";
 import { Post } from "../types/post";
+import { useState } from "react";
 
 interface PostFormProps {
-  onSubmit: (data: Post) => {};
+  //onSubmit: (data: Post) => {};
 }
 
 export const PostForm = (props: PostFormProps) => {
@@ -17,10 +18,16 @@ export const PostForm = (props: PostFormProps) => {
     register,
     handleSubmit,
     watch,
+    reset,
     formState: { errors },
   } = useForm<Post>();
-  const onSubmit = (data: Post) => props.onSubmit(data);
-
+  const onSubmit = async (data: Post) => {
+    setLoading(true);
+    await add(data);
+    setLoading(false);
+    reset();
+  };
+  const [loading, setLoading] = useState(false);
   return (
     <Box
       textAlign="right"
@@ -42,6 +49,8 @@ export const PostForm = (props: PostFormProps) => {
         />
         <Button
           borderRadius={10}
+          isLoading={loading}
+          loadingText="Submitting"
           type="submit"
           variant="solid"
           colorScheme="teal"
