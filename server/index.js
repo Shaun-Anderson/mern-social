@@ -12,6 +12,7 @@ const cors = require("cors");
 const cookieParser = require("cookie-parser"); // parse cookie header
 const bodyParser = require("body-parser"); // parse cookie header
 require("dotenv").config();
+const fileUpload = require("express-fileupload");
 
 // connect to mongodb
 mongoose
@@ -40,7 +41,11 @@ app.use(
 
 // parse cookies
 app.use(cookieParser());
-app.use(bodyParser.json());
+
+app.use(express.json()); // Used to parse JSON bodies
+app.use(express.urlencoded()); //Parse URL-encoded bodies
+
+app.use(fileUpload());
 
 // initalize passport
 app.use(passport.initialize());

@@ -3,6 +3,8 @@ const Schema = mongoose.Schema;
 
 const postSchema = new Schema({
   title: String,
+  image: String,
+  imageUrl: String,
   likes: [{ type: mongoose.Schema.ObjectId, ref: "User" }],
   postedBy: { type: mongoose.Schema.ObjectId, ref: "User" },
 });

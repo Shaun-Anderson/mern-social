@@ -2,9 +2,13 @@ const router = require("express").Router();
 const passport = require("passport");
 const CLIENT_HOME_PAGE_URL = "http://localhost:3000";
 const Post = require("../models/post");
+var AWS = require("aws-sdk");
+const { v4: uuidv4 } = require("uuid");
+const path = require("path");
 
 const authCheck = (req, res, next) => {
-  console.log(req.user);
+  console.log("Checking user");
+  //console.log(req.user);
   if (!req.user) {
     res.status(401).json({
       authenticated: false,
@@ -16,9 +20,40 @@ const authCheck = (req, res, next) => {
 };
 router.use(authCheck);
 
+// Set up S3
+AWS.config.update({
+  accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+  secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+});
+const s3 = new AWS.S3();
+
+async function getSignedUrl(key) {
+  return new Promise((resolve, reject) => {
+    let params = { Bucket: process.env.S3_BUCKET, Key: key };
+    console.log(params);
+    s3.getSignedUrl("getObject", params, (err, url) => {
+      if (err) reject(err);
+      resolve(url);
+    });
+  });
+}
+
+async function getSignedUrls(items) {
+  for (let item of items) {
+    console.log(item);
+    if (item.image != null) {
+      const signedUrl = await getSignedUrl(item.image);
+      item.imageUrl = signedUrl;
+    }
+  }
+  return items;
+}
+
 // when login is successful, retrieve user info
 router.get("/", async (req, res) => {
   const posts = await Post.find().populate("postedBy likes");
+  await getSignedUrls(posts);
+  console.log(posts);
   res.status(200).json(posts);
 });
 
@@ -41,7 +76,26 @@ router.get("/:id", async (req, res) => {
 // Delete a post by id
 router.delete("/:id", async (req, res) => {
   try {
-    const post = await Post.findOneAndDelete({
+    // Remove image for this post for S3
+    const post = await Post.findOne({
+      _id: req.params.id,
+      postedBy: req.user._id,
+    });
+
+    console.log(post);
+
+    // if image is applied remove it from s3
+    if (post.image != null) {
+      console.log("REMOVING IMAGE FROM S3");
+      await s3
+        .deleteObject({
+          Bucket: process.env.S3_BUCKET,
+          Key: post.image,
+        })
+        .promise();
+    }
+
+    deleteResult = await Post.deleteOne({
       _id: req.params.id,
       postedBy: req.user._id,
     });
@@ -78,17 +132,49 @@ router.get("user/:userId", async (req, res) => {
 
 // Add a new post from a user
 router.post("/", async (req, res) => {
-  const { userId } = req.params;
-  const newPost = new Post({
-    completed: false,
-    title: req.body.title || "",
-    postedBy: req.user._id,
-  });
+  console.log(req.files);
+  var image;
   try {
-    const result = await newPost.save();
-    console.log(await newPost.populate("postedBy").execPopulate());
+    // image added  with post
+    if (req.files) {
+      const file = req.files.image;
+      if (!file.mimetype.startsWith("image")) {
+        return res.status(400).json({
+          errors: [{ msg: "Images only" }],
+        });
+      }
+
+      image = `image_${uuidv4()}${path.parse(file.name).ext}`;
+
+      var Blob = req.files.image.data;
+
+      var params = {
+        Bucket: process.env.S3_BUCKET,
+        Key: image,
+        Body: Blob,
+      };
+      const s3Result = await s3.upload(params).promise();
+    }
+
+    const newPost = new Post({
+      completed: false,
+      title: req.body.title || "",
+      postedBy: req.user._id,
+      image: image || null,
+    });
+
+    await newPost.save();
+    // if image get the signed url to display on return
+    if (newPost.image != null) {
+      const signedUrl = await getSignedUrl(newPost.image);
+      newPost.imageUrl = signedUrl;
+    }
+
+    const finalPost = await newPost.populate("postedBy").execPopulate();
+    console.log(finalPost);
     return res.status(201).json(newPost.populate("postedBy"));
   } catch (err) {
+    console.log(err);
     return res.status(400).send(err);
   }
 });
