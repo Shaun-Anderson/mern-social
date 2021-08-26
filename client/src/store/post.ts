@@ -43,8 +43,26 @@ export class PostStore {
   //@action
   add = async (post: Post) => {
     try {
-      const result = await axios.post(`/post`, post, { withCredentials: true });
-      console.log(result);
+      const formData = new FormData();
+      formData.append("title", post.title);
+      formData.append("image", post.image);
+
+      formData.forEach((value: any, key: any) => {
+        //worked
+        console.log("PRINTING : ", key, value);
+      });
+
+      const result = await axios.post("/post", formData, {
+        withCredentials: true,
+        //headers: { "Content-Type": "multipart/form-data" },
+      });
+
+      // const result = await axios.post("/post", post, {
+      //   withCredentials: true,
+      //   headers: { "Content-Type": "multipart/form-data" },
+      // });
+      //const result = await axios.post(`/post`, post, { withCredentials: true });
+      //console.log(result);
       this.posts.push(result.data);
     } catch (error) {
       console.error("error", error);

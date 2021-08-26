@@ -25,6 +25,7 @@ export const PostCard = ({ post }: PostCardProps) => {
   } = useStore();
   return (
     <Box p={5} shadow="sm" borderWidth="1px" rounded="xl">
+      <img src={post.imageUrl} />
       <Text mb={3}>{post.title}</Text>
       <Flex>
         <HStack>
