@@ -49,6 +49,7 @@ export const PostForm = (props: PostFormProps) => {
 
   const handleImageChange = (event: any) => {
     setValue("image", event.target.files[0]);
+    setPostImage(URL.createObjectURL(event.target.files[0]));
   };
 
   const onError = (errors: any) => console.log(errors);
