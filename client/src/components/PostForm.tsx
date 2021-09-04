@@ -11,7 +11,6 @@ import { useStore } from "../common/useStore";
 import { useForm } from "react-hook-form";
 import { Post } from "../types/post";
 import { useState } from "react";
-import FileUpload from "./FileUpload";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 
@@ -42,6 +41,7 @@ export const PostForm = (props: PostFormProps) => {
     setLoading(true);
     await add(data);
     setLoading(false);
+    setPostImage("");
     reset();
   };
   const [loading, setLoading] = useState(false);
