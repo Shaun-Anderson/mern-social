@@ -38,7 +38,7 @@ function App() {
         //align="center"
         maxW={{ xl: "1200px" }}
         m="0 auto"
-        p={5}
+        //p={5}
         //h="100%"
         minH="100vh"
       >
