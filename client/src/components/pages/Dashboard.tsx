@@ -90,7 +90,7 @@ export const Dashboard = observer(() => {
       </Box>
 
       <PostForm />
-      <Stack spacing={4}>
+      <Stack spacing={4} style={{ maxHeight: "100%", overflowY: "auto" }}>
         {postStore.state === "pending" && (
           <Stack spacing={4}>
             <Skeleton height="50px" rounded="xl" />
