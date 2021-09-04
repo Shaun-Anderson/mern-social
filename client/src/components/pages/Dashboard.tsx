@@ -30,6 +30,7 @@ import { useColorMode, useColorModeValue } from "@chakra-ui/react";
 import { SunIcon, MoonIcon } from "@chakra-ui/icons";
 import { PostForm } from "../PostForm";
 import { PostCard } from "../PostCard";
+import { AlertDialog } from "../AlertDialog";
 
 export const Dashboard = observer(() => {
   const {
@@ -37,10 +38,17 @@ export const Dashboard = observer(() => {
     postStore,
   } = useStore();
   const { toggleColorMode, colorMode } = useColorMode();
+  const [deleteAlertOpen, setDeleteAlertOpen] = useState(false);
+  const [selectedPost, setSelectedPost] = useState<Post>();
 
   useEffect(() => {
     postStore.fetchPosts();
   }, []);
+
+  const handleDeleteButtonPressed = async (post: Post) => {
+    setSelectedPost(post);
+    setDeleteAlertOpen(true);
+  };
 
   return (
     <Flex
@@ -91,9 +99,27 @@ export const Dashboard = observer(() => {
           </Stack>
         )}
         {postStore.posts.map(function (post) {
-          return <PostCard key={post._id} post={toJS(post)} />;
+          return (
+            <PostCard
+              key={post._id}
+              post={toJS(post)}
+              deleteButtonPressed={(post: Post) =>
+                handleDeleteButtonPressed(post)
+              }
+            />
+          );
         })}
       </Stack>
+
+      <AlertDialog
+        title="Delete Post"
+        onClose={() => setDeleteAlertOpen(false)}
+        onSubmit={async () => {
+          await postStore.deletePost(selectedPost!);
+          setDeleteAlertOpen(false);
+        }}
+        isOpen={deleteAlertOpen}
+      />
     </Flex>
   );
 });

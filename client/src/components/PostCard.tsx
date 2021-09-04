@@ -17,11 +17,12 @@ import { Post } from "../types/post";
 
 interface PostCardProps {
   post: Post;
+  deleteButtonPressed: (data: Post) => Promise<void>;
 }
-export const PostCard = ({ post }: PostCardProps) => {
+export const PostCard = ({ post, deleteButtonPressed }: PostCardProps) => {
   const {
     authStore: { user },
-    postStore: { like, unlike, deletePost },
+    postStore: { like, unlike },
   } = useStore();
   return (
     <Box p={5} shadow="sm" borderWidth="1px" rounded="xl">
@@ -39,7 +40,7 @@ export const PostCard = ({ post }: PostCardProps) => {
             }
             onClick={
               post.likes.some(({ _id }) => _id === user?._id)
-                ? () => unlike(post)
+                ? () => unlike(post, user!)
                 : () => like(post, user!)
             }
           >
@@ -51,7 +52,7 @@ export const PostCard = ({ post }: PostCardProps) => {
               size="sm"
               colorScheme="red"
               variant="outline"
-              onClick={() => deletePost(post)}
+              onClick={() => deleteButtonPressed(post)}
             >
               Delete
             </Button>
