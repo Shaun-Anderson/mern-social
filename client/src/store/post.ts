@@ -4,6 +4,7 @@ import {
   computed,
   makeAutoObservable,
   makeObservable,
+  runInAction,
 } from "mobx";
 import { RootStore } from "./root";
 import axios from "axios";
@@ -14,7 +15,6 @@ import { User } from "../types/user";
 export class PostStore {
   // Parameters
   rootStore: RootStore;
-  //posts: Post[] = []
   readonly posts = observable<Post>([]);
   state = "pending"; // "pending", "done" or "error"
 
@@ -23,7 +23,6 @@ export class PostStore {
     makeAutoObservable(this);
   }
 
-  //@action
   fetchPosts = async () => {
     try {
       this.state = "pending";
@@ -32,89 +31,90 @@ export class PostStore {
         method: "GET",
         withCredentials: true,
       });
-      this.posts.replace(result.data);
-      this.state = "done";
+      runInAction(() => {
+        this.posts.replace(result.data);
+        this.state = "done";
+      });
     } catch (error) {
       console.error("error", error);
-      this.state = "error";
+      runInAction(() => {
+        this.state = "error";
+      });
     }
   };
 
-  //@action
   add = async (post: Post) => {
     try {
       const formData = new FormData();
       formData.append("title", post.title);
       formData.append("image", post.image);
-
-      formData.forEach((value: any, key: any) => {
-        //worked
-        console.log("PRINTING : ", key, value);
-      });
-
       const result = await axios.post("/post", formData, {
         withCredentials: true,
-        //headers: { "Content-Type": "multipart/form-data" },
       });
-
-      // const result = await axios.post("/post", post, {
-      //   withCredentials: true,
-      //   headers: { "Content-Type": "multipart/form-data" },
-      // });
-      //const result = await axios.post(`/post`, post, { withCredentials: true });
-      //console.log(result);
-      this.posts.push(result.data);
+      runInAction(() => {
+        this.posts.push(result.data);
+        this.state = "done";
+      });
     } catch (error) {
-      console.error("error", error);
+      runInAction(() => {
+        this.state = "error";
+      });
     }
   };
 
   deletePost = async (post: Post) => {
     try {
-      const result = await axios.delete(`/post/${post._id}`, {
+      await axios.delete(`/post/${post._id}`, {
         withCredentials: true,
       });
       //var test = this.posts.remove(post);
       var newPosts = this.posts.filter((item) => item._id !== post._id);
-      this.posts.replace(newPosts);
-      console.log(this.posts[0]);
+      runInAction(() => {
+        this.posts.replace(newPosts);
+        this.state = "done";
+      });
+      //console.log(this.posts[0]);
     } catch (error) {
-      console.error("error", error);
+      runInAction(() => {
+        this.state = "error";
+      });
     }
   };
 
-  // TODO: Replace later with a modified returned post from server
   like = async (post: Post, user: User) => {
     try {
-      const result = await axios.patch(`/post/${post._id}/like`, post, {
+      await axios.patch(`/post/${post._id}/like`, post, {
         withCredentials: true,
       });
-      console.log(result);
-      //this.posts.push(result.data)
-      const oldPost = this.posts.find((q) => q._id === post._id);
-      if (oldPost == undefined) throw Error("post could not be found");
-      oldPost.likes.push(user);
-
-      //   Object.assign(updated, dummy_person)
-      //   this.posts = this.posts.map( item => {
-      //     item.DataSource = item.DataSource ? '' || 'XXX' : 'MyVAL'
-      //     return item;
-      //  });
+      runInAction(() => {
+        const oldPost = this.posts.find((q) => q._id === post._id);
+        if (oldPost === undefined) throw Error("post could not be found");
+        oldPost.likes.push(user);
+        this.state = "done";
+      });
     } catch (error) {
-      console.error("error", error);
+      runInAction(() => {
+        this.state = "error";
+      });
     }
   };
 
-  unlike = async (post: Post) => {
-    console.log("Unlike");
+  unlike = async (post: Post, user: User) => {
     try {
-      const result = await axios.patch(`/post/${post._id}/unlike`, post, {
+      await axios.patch(`/post/${post._id}/unlike`, post, {
         withCredentials: true,
       });
-      console.log(result);
-      this.posts.push(result.data);
+      runInAction(() => {
+        const oldPost = this.posts.find((q) => q._id === post._id);
+        if (oldPost === undefined) throw Error("post could not be found");
+        const index = oldPost.likes.indexOf(user);
+        oldPost.likes.splice(index, 1);
+        this.state = "done";
+      });
     } catch (error) {
-      console.error("error", error);
+      runInAction(() => {
+        this.state = "error";
+      });
     }
   };
 
