@@ -23,6 +23,7 @@ import {
   Switch,
   useBreakpointValue,
   useColorMode,
+  VStack,
 } from "@chakra-ui/react";
 import axios from "axios";
 import { Profile } from "./components/pages/Profile";
@@ -73,6 +74,11 @@ function App() {
       //p={5}
       //h="100%"
       minH="100vh"
+      // bgGradient={[
+      //   "linear(to-tr, teal.300, yellow.400)",
+      //   "linear(to-t, blue.200, teal.500)",
+      //   "linear(to-b, orange.100, purple.300)",
+      // ]}
     >
       <Box width="full" display="flex" alignItems="center">
         <Box flexGrow={1}>
@@ -106,8 +112,10 @@ function App() {
       <Grid templateColumns="repeat(5, 1fr)" gap={6}>
         <GridItem colSpan={1} hidden={smallViewport} position="sticky" top="0">
           {/* Sidebar */}
-          <ActiveLink to="/" text="Activity" />
-          <ActiveLink to="/Profile" text="Profile" />
+          <VStack spacing={2}>
+            <ActiveLink to="/" text="Activity" />
+            <ActiveLink to="/Profile" text="Profile" />
+          </VStack>
         </GridItem>
         {/* Main viewport */}
         <GridItem
