@@ -9,6 +9,7 @@ import { PrivateRoute } from "./components/PrivateRoute";
 import { AuthStore } from "./store/auth";
 import { ChakraProvider, Flex } from "@chakra-ui/react";
 import axios from "axios";
+import { Profile } from "./components/pages/Profile";
 
 function App() {
   const {
@@ -48,6 +49,12 @@ function App() {
             exact
             path="/"
             component={Dashboard}
+          />
+          <PrivateRoute
+            isAuthorized={isAuthorized}
+            exact
+            path="/Profile"
+            component={Profile}
           />
           <PrivateRoute
             isAuthorized={isAuthorized}
