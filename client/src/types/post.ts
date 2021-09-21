@@ -6,6 +6,7 @@ export interface Post {
   completed: boolean;
   likes: [User];
   postedBy: User;
+  postedAt: Date;
   image: File;
   imageUrl: string;
 }

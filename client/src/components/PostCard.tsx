@@ -36,6 +36,7 @@ import {
   DotsHorizontalIcon,
 } from "@heroicons/react/outline";
 import { Image } from "@chakra-ui/react";
+import { LinkBox, LinkOverlay } from "@chakra-ui/react";
 
 interface PostCardProps {
   post: Post;
@@ -48,7 +49,14 @@ export const PostCard = ({ post, deleteButtonPressed }: PostCardProps) => {
   } = useStore();
 
   return (
-    <Box p={5}>
+    <LinkBox
+      p={5}
+      as="article"
+      _hover={{
+        background: "gray.50",
+      }}
+      rounded="xl"
+    >
       <HStack display="flex" alignItems="flex-start">
         <Avatar
           name={post.postedBy.name}
@@ -57,18 +65,28 @@ export const PostCard = ({ post, deleteButtonPressed }: PostCardProps) => {
         />
         <VStack alignItems="stretch">
           <HStack>
-            <Heading as="h5" size="sm">
-              {post.postedBy.name}
-            </Heading>
-            <Text size="xs" colorScheme="whatsapp">
-              {post.postedBy.name}
+            <LinkOverlay href="#">
+              <Heading as="h5" size="sm">
+                {post.postedBy.name}
+              </Heading>
+            </LinkOverlay>
+
+            <Text fontSize="xs" color="gray">
+              {post.postedAt}
             </Text>
           </HStack>
           <Text mb={5} ml={10}>
             {post.title}
           </Text>
           {post.imageUrl && (
-            <Image src={post.imageUrl} alt="Post image" rounded="xl" />
+            <Image
+              width={782}
+              height={470}
+              src={post.imageUrl}
+              alt="Post image"
+              rounded="xl"
+              fallbackSrc="https://via.placeholder.com/300"
+            />
           )}
           <Flex>
             <HStack>
@@ -136,6 +154,6 @@ export const PostCard = ({ post, deleteButtonPressed }: PostCardProps) => {
           </Flex>
         </VStack>
       </HStack>
-    </Box>
+    </LinkBox>
   );
 };

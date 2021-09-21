@@ -7,6 +7,7 @@ const postSchema = new Schema({
   imageUrl: String,
   likes: [{ type: mongoose.Schema.ObjectId, ref: "User" }],
   postedBy: { type: mongoose.Schema.ObjectId, ref: "User" },
+  postedAt: Date,
 });
 
 const post = mongoose.model("Post", postSchema);

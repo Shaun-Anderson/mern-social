@@ -161,6 +161,7 @@ router.post("/", async (req, res) => {
       title: req.body.title || "",
       postedBy: req.user._id,
       image: image || null,
+      postedAt: new Date(),
     });
 
     await newPost.save();
