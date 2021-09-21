@@ -3,6 +3,7 @@ import {
   Box,
   Button,
   FormErrorMessage,
+  HStack,
   Icon,
   IconButton,
   MenuIcon,
@@ -62,23 +63,34 @@ export const PostForm = (props: PostFormProps) => {
   return (
     <Box
       textAlign="right"
-      p={5}
-      shadow="sm"
-      borderWidth="1px"
+      //p={5}
+      //shadow="lg"
+      //borderWidth="1px"
       rounded="xl"
       mb={5}
+      background="gray.100"
+      //overflow="hidden"
     >
       <form onSubmit={handleSubmit(onSubmit, onError)}>
-        <Image src={postImage} alt="Post image" rounded="xl" />
+        {postImage && (
+          <Image
+            //htmlWidth={782}
+            src={postImage}
+            alt="Post image"
+            rounded="xl"
+            style={{ borderBottomLeftRadius: 0, borderBottomRightRadius: 0 }}
+          />
+        )}
 
         <Textarea
           placeholder="Post"
           //size="sm"
+          rounded="xl"
           variant="filled"
           resize="vertical"
           isInvalid={errors.title ? true : false}
           {...register("title")}
-          mb={3}
+          style={{ borderTopLeftRadius: 0, borderTopRightRadius: 0 }}
         />
         <input
           type="file"
@@ -86,28 +98,42 @@ export const PostForm = (props: PostFormProps) => {
           hidden
           ref={fileInput}
         />
-        <IconButton
-          aria-label="Add image"
-          icon={<Icon as={PaperClipIcon} />}
-          rounded="xl"
-          mr={1}
-          onClick={() => {
-            if (fileInput.current !== null) {
-              fileInput.current!.click();
-            }
-            // at this point if you need to trigger click then invoke .click() instead
-          }}
-        />
-        <Button
-          rounded="xl"
-          isLoading={loading}
-          loadingText="Submitting"
-          type="submit"
-          variant="solid"
-          colorScheme="teal"
-        >
-          Post
-        </Button>
+        <HStack p={2} justify="right">
+          <Button
+            rounded="xl"
+            variant="solid"
+            size="sm"
+            onClick={() => {
+              setPostImage("");
+              reset();
+            }}
+          >
+            Clear
+          </Button>
+          <IconButton
+            aria-label="Add image"
+            icon={<Icon as={PaperClipIcon} />}
+            rounded="xl"
+            size="sm"
+            mr={1}
+            onClick={() => {
+              if (fileInput.current !== null) {
+                fileInput.current!.click();
+              }
+            }}
+          />
+          <Button
+            rounded="xl"
+            size="sm"
+            isLoading={loading}
+            loadingText="Submitting"
+            type="submit"
+            variant="solid"
+            colorScheme="teal"
+          >
+            Post
+          </Button>
+        </HStack>
       </form>
     </Box>
   );
