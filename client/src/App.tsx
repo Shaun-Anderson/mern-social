@@ -36,7 +36,7 @@ function App() {
       <Flex
         direction="column"
         //align="center"
-        maxW={{ xl: "1200px" }}
+        maxW={{ xl: "1500px" }}
         m="0 auto"
         //p={5}
         //h="100%"

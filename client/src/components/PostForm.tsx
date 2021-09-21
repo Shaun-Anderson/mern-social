@@ -1,8 +1,10 @@
-import React from "react";
+import React, { createRef, useRef } from "react";
 import {
   Box,
   Button,
   FormErrorMessage,
+  Icon,
+  IconButton,
   MenuIcon,
   Textarea,
 } from "@chakra-ui/react";
@@ -13,6 +15,8 @@ import { Post } from "../types/post";
 import { useState } from "react";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
+import { PaperClipIcon } from "@heroicons/react/outline";
+import { Image } from "@chakra-ui/react";
 
 interface PostFormProps {
   //onSubmit: (data: Post) => {};
@@ -46,6 +50,7 @@ export const PostForm = (props: PostFormProps) => {
   };
   const [loading, setLoading] = useState(false);
   const [postImage, setPostImage] = useState<string | undefined>(undefined);
+  const fileInput = useRef<HTMLInputElement>(null);
 
   const handleImageChange = (event: any) => {
     setValue("image", event.target.files[0]);
@@ -64,7 +69,8 @@ export const PostForm = (props: PostFormProps) => {
       mb={5}
     >
       <form onSubmit={handleSubmit(onSubmit, onError)}>
-        <img src={postImage} alt="" />
+        <Image src={postImage} alt="Post image" rounded="xl" />
+
         <Textarea
           placeholder="Post"
           //size="sm"
@@ -74,9 +80,26 @@ export const PostForm = (props: PostFormProps) => {
           {...register("title")}
           mb={3}
         />
-        <input type="file" onChange={handleImageChange} />
+        <input
+          type="file"
+          onChange={handleImageChange}
+          hidden
+          ref={fileInput}
+        />
+        <IconButton
+          aria-label="Add image"
+          icon={<Icon as={PaperClipIcon} />}
+          rounded="xl"
+          mr={1}
+          onClick={() => {
+            if (fileInput.current !== null) {
+              fileInput.current!.click();
+            }
+            // at this point if you need to trigger click then invoke .click() instead
+          }}
+        />
         <Button
-          borderRadius={10}
+          rounded="xl"
           isLoading={loading}
           loadingText="Submitting"
           type="submit"

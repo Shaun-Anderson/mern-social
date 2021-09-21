@@ -22,6 +22,8 @@ import {
   Grid,
   Textarea,
   Skeleton,
+  GridItem,
+  useBreakpointValue,
 } from "@chakra-ui/react";
 import { Post } from "../../types/post";
 import { observer } from "mobx-react-lite";
@@ -40,7 +42,7 @@ export const Dashboard = observer(() => {
   const { toggleColorMode, colorMode } = useColorMode();
   const [deleteAlertOpen, setDeleteAlertOpen] = useState(false);
   const [selectedPost, setSelectedPost] = useState<Post>();
-
+  const smallViewport = useBreakpointValue({ sm: true, md: true, lg: false });
   useEffect(() => {
     postStore.fetchPosts();
   }, []);
@@ -89,28 +91,35 @@ export const Dashboard = observer(() => {
         </Box>
       </Box>
 
-      <PostForm />
-      <Stack spacing={4} style={{ maxHeight: "100%", overflowY: "auto" }}>
-        {postStore.state === "pending" && (
-          <Stack spacing={4}>
-            <Skeleton height="50px" rounded="xl" />
-            <Skeleton height="50px" rounded="xl" />
-            <Skeleton height="50px" rounded="xl" />
+      <Grid templateColumns="repeat(5, 1fr)" gap={6}>
+        <GridItem colSpan={1} h="100vh" bg="tomato" hidden={smallViewport} />
+        <GridItem
+          colSpan={[5, 5, 5, 3]}
+          style={{ maxHeight: "100%", overflowY: "auto" }}
+        >
+          <PostForm />
+          <Stack spacing={0} style={{ maxHeight: "100%", overflowY: "auto" }}>
+            {postStore.state === "pending" && (
+              <Stack spacing={4}>
+                <Skeleton height="50px" rounded="xl" />
+                <Skeleton height="50px" rounded="xl" />
+                <Skeleton height="50px" rounded="xl" />
+              </Stack>
+            )}
+            {postStore.posts.map(function (post) {
+              return (
+                <PostCard
+                  key={post._id}
+                  post={toJS(post)}
+                  deleteButtonPressed={(post: Post) =>
+                    handleDeleteButtonPressed(post)
+                  }
+                />
+              );
+            })}
           </Stack>
-        )}
-        {postStore.posts.map(function (post) {
-          return (
-            <PostCard
-              key={post._id}
-              post={toJS(post)}
-              deleteButtonPressed={(post: Post) =>
-                handleDeleteButtonPressed(post)
-              }
-            />
-          );
-        })}
-      </Stack>
-
+        </GridItem>
+      </Grid>
       <AlertDialog
         title="Delete Post"
         onClose={() => setDeleteAlertOpen(false)}
