@@ -1,20 +1,26 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import "./index.css";
-import App from "./App";
+import App, { AppWrapper } from "./App";
 import reportWebVitals from "./reportWebVitals";
 import { StoreProvider } from "./common/storeProvider";
-import { BrowserRouter } from "react-router-dom";
+import { BrowserRouter, Route, Switch } from "react-router-dom";
 import { RootStore } from "./store/root";
+import { ChakraProvider } from "@chakra-ui/react";
+import { PrivateRoute } from "./components/PrivateRoute";
+import Login from "./components/pages/Login";
+import { useStore } from "./common/useStore";
 
 const initialRootStore = new RootStore();
 
 ReactDOM.render(
   <StoreProvider value={initialRootStore}>
     <BrowserRouter>
-      <React.StrictMode>
-        <App />
-      </React.StrictMode>
+      <ChakraProvider>
+        <React.StrictMode>
+          <AppWrapper />
+        </React.StrictMode>
+      </ChakraProvider>
     </BrowserRouter>
   </StoreProvider>,
   document.getElementById("root")

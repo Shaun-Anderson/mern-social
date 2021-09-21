@@ -1,35 +1,9 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useStore } from "../../common/useStore";
-import {
-  Flex,
-  Heading,
-  Input,
-  Button,
-  InputGroup,
-  Stack,
-  InputLeftElement,
-  chakra,
-  Box,
-  Link,
-  Avatar,
-  FormControl,
-  FormHelperText,
-  InputRightElement,
-  Text,
-  Spacer,
-  FormLabel,
-  Switch,
-  Grid,
-  Textarea,
-  Skeleton,
-  GridItem,
-  useBreakpointValue,
-} from "@chakra-ui/react";
+import { Flex, Stack, Skeleton } from "@chakra-ui/react";
 import { Post } from "../../types/post";
 import { observer } from "mobx-react-lite";
 import { toJS } from "mobx";
-import { useColorMode, useColorModeValue } from "@chakra-ui/react";
-import { SunIcon, MoonIcon } from "@chakra-ui/icons";
 import { PostForm } from "../PostForm";
 import { PostCard } from "../PostCard";
 import { AlertDialog } from "../AlertDialog";
@@ -39,10 +13,8 @@ export const Dashboard = observer(() => {
     authStore: { isAuthorized, logout, user },
     postStore,
   } = useStore();
-  const { toggleColorMode, colorMode } = useColorMode();
   const [deleteAlertOpen, setDeleteAlertOpen] = useState(false);
   const [selectedPost, setSelectedPost] = useState<Post>();
-  const smallViewport = useBreakpointValue({ sm: true, md: true, lg: false });
   useEffect(() => {
     postStore.fetchPosts();
   }, []);
@@ -61,65 +33,31 @@ export const Dashboard = observer(() => {
       padding={3}
       // alignItems="center"
     >
-      <Box width="full" display="flex" alignItems="center">
-        <Box flexGrow={1}>
-          <Heading mb={4}>Mern Post</Heading>
-        </Box>
-        <Spacer />
-        <Box>
-          <FormControl display="flex" alignItems="center">
-            <FormLabel htmlFor="email-alerts" mb="0" mr={2}>
-              <SunIcon verticalAlign="middle" />
-            </FormLabel>
-            <Switch
-              id="email-alerts"
-              checked={colorMode === "light" ? false : true}
-              onChange={toggleColorMode}
-            />
-            <FormLabel htmlFor="email-alerts" mb="0" mr={0} ml={2}>
-              <MoonIcon />
-            </FormLabel>
-          </FormControl>
-        </Box>
-        <Box>
-          <Avatar
-            name={user?.name}
-            src={user?.profileImageUrl}
-            size="sm"
-            onClick={(e) => logout()}
-          />
-        </Box>
-      </Box>
-
-      <Grid templateColumns="repeat(5, 1fr)" gap={6}>
-        <GridItem colSpan={1} h="100vh" bg="tomato" hidden={smallViewport} />
-        <GridItem
-          colSpan={[5, 5, 5, 3]}
-          style={{ maxHeight: "100%", overflowY: "auto" }}
-        >
-          <PostForm />
-          <Stack spacing={0} style={{ maxHeight: "100%", overflowY: "auto" }}>
-            {postStore.state === "pending" && (
-              <Stack spacing={4}>
-                <Skeleton height="50px" rounded="xl" />
-                <Skeleton height="50px" rounded="xl" />
-                <Skeleton height="50px" rounded="xl" />
-              </Stack>
-            )}
-            {postStore.posts.map(function (post) {
-              return (
-                <PostCard
-                  key={post._id}
-                  post={toJS(post)}
-                  deleteButtonPressed={(post: Post) =>
-                    handleDeleteButtonPressed(post)
-                  }
-                />
-              );
-            })}
+      <PostForm />
+      <Stack
+        spacing={0}
+        // style={{ maxHeight: "100%", overflowY: "auto" }}
+        paddingBottom={5}
+      >
+        {postStore.state === "pending" && postStore.posts.length === 0 && (
+          <Stack spacing={4}>
+            <Skeleton height="50px" rounded="xl" />
+            <Skeleton height="50px" rounded="xl" />
+            <Skeleton height="50px" rounded="xl" />
           </Stack>
-        </GridItem>
-      </Grid>
+        )}
+        {postStore.posts.map(function (post) {
+          return (
+            <PostCard
+              key={post._id}
+              post={toJS(post)}
+              deleteButtonPressed={(post: Post) =>
+                handleDeleteButtonPressed(post)
+              }
+            />
+          );
+        })}
+      </Stack>
       <AlertDialog
         title="Delete Post"
         onClose={() => setDeleteAlertOpen(false)}

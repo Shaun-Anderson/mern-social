@@ -24,6 +24,7 @@ import {
   Skeleton,
   GridItem,
   useBreakpointValue,
+  VStack,
 } from "@chakra-ui/react";
 import { Post } from "../../types/post";
 import { observer } from "mobx-react-lite";
@@ -61,11 +62,16 @@ export const Profile = observer(() => {
       padding={3}
       // alignItems="center"
     >
-      {/* Profile Header */}
-      <Box width="full" display="flex" alignItems="center">
-        <Avatar name={user?.name} src={user?.profileImageUrl} size="xl" />
-        {user?.name}
-      </Box>
+      <VStack>
+        {/* Profile Header */}
+        <Box width="full" display="flex" alignItems="center">
+          <Avatar name={user?.name} src={user?.profileImageUrl} size="xl" />
+        </Box>
+        <Text>Display Name</Text>
+        <Input placeholder="Display Name" value={user?.name} />
+      </VStack>
+
+      <Button colorScheme="red">Logout</Button>
 
       <AlertDialog
         title="Delete User"

@@ -30,7 +30,7 @@ export class AuthStore {
         throw new Error("failed to authenticate user");
       })
       .then((responseJson) => {
-        console.log(responseJson);
+        // console.log(responseJson);
         console.log("AUTH: success");
         //console.log(responseJson)
         this.user = responseJson.user;
