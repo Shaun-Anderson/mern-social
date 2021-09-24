@@ -1,28 +1,27 @@
-import { Route, Redirect, RouteProps } from "react-router-dom";
+import { FC } from "react";
+import { Navigate, Route, useLocation } from "react-router-dom";
+import { useStore } from "../common/useStore";
 
-interface PrivateRouteProps extends RouteProps {
-  component: any;
-  isAuthorized: boolean;
+interface Props {
+  element: React.ReactElement;
+  path?: string;
 }
 
-export const PrivateRoute = (props: PrivateRouteProps) => {
-  const { component: Component, isAuthorized, ...rest } = props;
+const PrivateElement: FC<Props> = ({ element }) => {
+  const {
+    authStore: { isAuthorized, load, logout, user },
+  } = useStore();
+  let location = useLocation();
 
-  return (
-    <Route
-      {...rest}
-      render={(routeProps) =>
-        isAuthorized ? (
-          <Component {...routeProps} />
-        ) : (
-          <Redirect
-            to={{
-              pathname: "/Login",
-              state: { from: routeProps.location },
-            }}
-          />
-        )
-      }
-    />
+  // if (loading) return <p>Loading.. </p>;
+
+  return isAuthorized ? (
+    element
+  ) : (
+    <Navigate to="/login" state={{ from: location }} />
   );
+};
+
+export const PrivateRoute: FC<Props> = ({ element, ...rest }) => {
+  return <Route {...rest} element={<PrivateElement element={element} />} />;
 };

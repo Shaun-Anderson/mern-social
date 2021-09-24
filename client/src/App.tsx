@@ -3,8 +3,9 @@ import "./App.css";
 import { useStore } from "./common/useStore";
 import {
   Route,
-  Switch as RouterSwitch,
+  Routes,
   Link as RouteLink,
+  BrowserRouter,
 } from "react-router-dom";
 import Login from "./components/pages/Login";
 import { Dashboard } from "./components/pages/Dashboard";
@@ -19,6 +20,9 @@ import {
   Grid,
   GridItem,
   Heading,
+  Input,
+  InputGroup,
+  InputRightElement,
   Spacer,
   Switch,
   useBreakpointValue,
@@ -29,6 +33,7 @@ import axios from "axios";
 import { Profile } from "./components/pages/Profile";
 import { SunIcon, MoonIcon } from "@chakra-ui/icons";
 import ActiveLink from "./components/ActiveLink";
+import { Kbd } from "@chakra-ui/react";
 
 export function AppWrapper() {
   const {
@@ -48,10 +53,13 @@ export function AppWrapper() {
   if (!data.length) return <span>loading...</span>;
 
   return (
-    <RouterSwitch>
-      <PrivateRoute isAuthorized={isAuthorized} path="/" component={App} />
-      <Route exact path="/Login" component={Login}></Route>
-    </RouterSwitch>
+    <BrowserRouter>
+      <Routes>
+        <PrivateRoute path="/*" element={<App />} />
+        {/* <Route path="/" element={<App />} /> */}
+        <Route path="/Login" element={<Login />}></Route>
+      </Routes>
+    </BrowserRouter>
   );
 }
 
@@ -80,10 +88,19 @@ function App() {
       //   "linear(to-b, orange.100, purple.300)",
       // ]}
     >
+      {/* Nav Bar */}
       <Box width="full" display="flex" alignItems="center">
         <Box flexGrow={1}>
           <Heading mb={4}>Mern Post</Heading>
         </Box>
+        {/* <Spacer /> */}
+        {/* <InputGroup size="md">
+          <Input pr="4.5rem" type="text" placeholder="Enter password" />
+          <InputRightElement width="4.5rem">
+            <Kbd>Ctrl</Kbd>
+            <Kbd>K</Kbd>
+          </InputRightElement>
+        </InputGroup> */}
         <Spacer />
         <Box>
           <FormControl display="flex" alignItems="center">
@@ -114,7 +131,7 @@ function App() {
           {/* Sidebar */}
           <VStack spacing={2}>
             <ActiveLink to="/" text="Activity" />
-            <ActiveLink to="/Profile" text="Profile" />
+            <ActiveLink to={`/profile`} text="Profile" />
           </VStack>
         </GridItem>
         {/* Main viewport */}
@@ -122,27 +139,26 @@ function App() {
           colSpan={[5, 5, 5, 3]}
           // style={{ maxHeight: "100%", overflowY: "auto" }}
         >
-          <RouterSwitch>
+          <Routes>
             <PrivateRoute
-              isAuthorized={isAuthorized}
-              exact
+              // isAuthorized={isAuthorized}
               path="/"
-              component={Dashboard}
+              element={<Dashboard />}
             />
             <PrivateRoute
-              isAuthorized={isAuthorized}
-              path="/Profile"
-              component={Profile}
+              // isAuthorized={isAuthorized}
+              path={`/profile`}
+              element={<Profile />}
             />
             <PrivateRoute
-              isAuthorized={isAuthorized}
+              // isAuthorized={isAuthorized}
               path="/Dashboard"
-              component={Dashboard}
+              element={<Dashboard />}
             />
             {/* <Route exact path="/Login">
               <Login></Login>
             </Route> */}
-          </RouterSwitch>
+          </Routes>
         </GridItem>
       </Grid>
     </Flex>

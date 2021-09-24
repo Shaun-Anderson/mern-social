@@ -1,11 +1,9 @@
-import { Link as RouteLink, useHistory } from "react-router-dom";
+import { Link as RouteLink, useMatch } from "react-router-dom";
 import PropTypes from "prop-types";
 import React, { Children } from "react";
 import { Heading, Link, Text } from "@chakra-ui/react";
 type NavLinkProps = { text: string; to: string };
 const ActiveLink = ({ text, to }: NavLinkProps) => {
-  const history = useHistory();
-
   return (
     <Link
       as={RouteLink}
@@ -14,7 +12,7 @@ const ActiveLink = ({ text, to }: NavLinkProps) => {
       width="100%"
       rounded="xl"
       display="block"
-      backgroundColor={history.location.pathname === to ? "gray.100" : ""}
+      backgroundColor={useMatch(to) ? "gray.100" : ""}
       style={{ textDecoration: "none" }}
       _hover={{ backgroundColor: "gray.50" }}
     >
