@@ -14,12 +14,18 @@ import {
   Avatar,
   Box,
   Button,
+  Drawer,
+  DrawerBody,
+  DrawerContent,
+  DrawerHeader,
+  DrawerOverlay,
   Flex,
   FormControl,
   FormLabel,
   Grid,
   GridItem,
   Heading,
+  IconButton,
   Input,
   InputGroup,
   InputRightElement,
@@ -31,7 +37,7 @@ import {
 } from "@chakra-ui/react";
 import axios from "axios";
 import { Profile } from "./components/pages/Profile";
-import { SunIcon, MoonIcon } from "@chakra-ui/icons";
+import { SunIcon, MoonIcon, SearchIcon, HamburgerIcon } from "@chakra-ui/icons";
 import ActiveLink from "./components/ActiveLink";
 import { Kbd } from "@chakra-ui/react";
 
@@ -44,13 +50,11 @@ export function AppWrapper() {
   useEffect(() => {
     async function getToken() {
       const token = await load();
-      console.log(token);
-      setData("hi");
     }
     getToken();
   }, []);
 
-  if (!data.length) return <span>loading...</span>;
+  // if (!data.length) return <span>loading...</span>;
 
   return (
     <BrowserRouter>
@@ -64,7 +68,13 @@ export function AppWrapper() {
 }
 
 function App() {
-  const smallViewport = useBreakpointValue({ sm: true, md: true, lg: false });
+  const smallViewport = useBreakpointValue({
+    base: true,
+    xs: true,
+    sm: true,
+    md: true,
+    lg: false,
+  });
   const { toggleColorMode, colorMode } = useColorMode();
   const {
     authStore: { isAuthorized, load, logout, user },
@@ -72,7 +82,7 @@ function App() {
   axios.defaults.baseURL = "http://localhost:4000";
   // axios.defaults.headers.common['Authorization'] = 'AUTH TOKEN';
   // axios.defaults.headers.post['Content-Type'] = 'application/json';
-
+  const [drawerOpen, setDrawerOpen] = useState(false);
   return (
     <Flex
       direction="column"
@@ -90,9 +100,16 @@ function App() {
     >
       {/* Nav Bar */}
       <Box width="full" display="flex" alignItems="center">
+        <IconButton
+          aria-label="Open sidebar navigation "
+          hidden={!smallViewport}
+          icon={<HamburgerIcon />}
+          onClick={() => setDrawerOpen(true)}
+        />
         <Box flexGrow={1}>
           <Heading mb={4}>Mern Post</Heading>
         </Box>
+
         {/* <Spacer /> */}
         {/* <InputGroup size="md">
           <Input pr="4.5rem" type="text" placeholder="Enter password" />
@@ -126,7 +143,23 @@ function App() {
           />
         </Box>
       </Box>
-      <Grid templateColumns="repeat(5, 1fr)" gap={6}>
+      {/* Drawer Navigation */}
+      <Drawer
+        placement="left"
+        onClose={() => setDrawerOpen(false)}
+        isOpen={drawerOpen}
+      >
+        <DrawerOverlay />
+        <DrawerContent>
+          <DrawerBody>
+            <VStack spacing={2}>
+              <ActiveLink to="/" text="Activity" />
+              <ActiveLink to={`/profile`} text="Profile" />
+            </VStack>
+          </DrawerBody>
+        </DrawerContent>
+      </Drawer>
+      <Grid templateColumns="repeat(5, 1fr)" gap={6} style={{ padding: 10 }}>
         <GridItem colSpan={1} hidden={smallViewport} position="sticky" top="0">
           {/* Sidebar */}
           <VStack spacing={2}>
@@ -136,7 +169,7 @@ function App() {
         </GridItem>
         {/* Main viewport */}
         <GridItem
-          colSpan={[5, 5, 5, 3]}
+          colSpan={[5, 5, 5, 4, 3]}
           // style={{ maxHeight: "100%", overflowY: "auto" }}
         >
           <Routes>

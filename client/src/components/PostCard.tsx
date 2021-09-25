@@ -50,7 +50,8 @@ export const PostCard = ({ post, deleteButtonPressed }: PostCardProps) => {
 
   return (
     <LinkBox
-      p={5}
+      px={[0, 5]}
+      py={[2, 5]}
       as="article"
       _hover={{
         background: "gray.50",
@@ -87,8 +88,8 @@ export const PostCard = ({ post, deleteButtonPressed }: PostCardProps) => {
             </Text>
             {post.imageUrl && (
               <Image
-                width={782}
-                height={470}
+                // width={782}
+                // height={470}
                 src={post.imageUrl}
                 alt="Post image"
                 rounded="xl"
